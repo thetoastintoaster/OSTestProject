@@ -110,9 +110,9 @@ enable_paging:
 
 error:
     ; print "ERR: X" where X is the error code
-    mov dword [0xb800], 0x4f524f45
-    mov dword [0xb800], 0x4f3a4f52
-    mov dword [0xb800], 0x4f204f20
+    mov dword [0xb8000], 0x4f524f45
+    mov dword [0xb8004], 0x4f3a4f52
+    mov dword [0xb8008], 0x4f204f20
     mov byte [0xb800a], al
     hlt
 
@@ -134,5 +134,5 @@ gdt64:
 .code_segment: equ $ - gdt64
     dq (1 << 43) | (1 << 44) | ( 1 << 47) | (1 << 53) ; code segment
 .pointer:
-    dw $ - gdt64 - 1
-    dq gdt64
+    dw $ - gdt64 - 1 ; length
+    dq gdt64 ; address
