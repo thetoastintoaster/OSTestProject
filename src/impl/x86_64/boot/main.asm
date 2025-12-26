@@ -1,4 +1,4 @@
-global header_start
+global start
 extern long_mode_start
 
 section .text
@@ -11,7 +11,7 @@ start:
     call check_long_mode
 
     call setup_page_tables
-    call_enable_paging
+    call enable_paging
 
     lgdt [gdt64.pointer]
     jmp gdt64.code_segment:long_mode_start
@@ -50,7 +50,7 @@ check_long_mode:
     mov eax, 0x80000000
     cpuid
     cmp eax, 0x80000001
-    jp .no_long_mode
+    jb .no_long_mode
 
     mov eax, 0x80000001
     cpuid
@@ -113,7 +113,7 @@ error:
     mov dword [0xb8000], 0x4f524f45
     mov dword [0xb8004], 0x4f3a4f52
     mov dword [0xb8008], 0x4f204f20
-    mov byte [0xb800a], al
+    mov byte  [0xb800a], al
     hlt
 
 section .bss
@@ -132,7 +132,7 @@ section .rodata
 gdt64:
     dq 0 ; zero entry
 .code_segment: equ $ - gdt64
-    dq (1 << 43) | (1 << 44) | ( 1 << 47) | (1 << 53) ; code segment
+    dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53) ; code segment
 .pointer:
     dw $ - gdt64 - 1 ; length
     dq gdt64 ; address
